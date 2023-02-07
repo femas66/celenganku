@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Celengan;
+use App\Models\Riwayat;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -50,6 +51,12 @@ class HomeController extends Controller
         $data = ['terkumpul' => $a->terkumpul + $request->input('uang')];
 
         $a->update($data);
+        $d_r = [
+            'celengan_id' => $request->input('id'),
+            'uang' => $request->input('uang'),
+            'deskripsi' => "+ " . $request->input('deskripsi')
+        ];
+        Riwayat::create($d_r);
         return redirect()->route('home');
     }
     public function viewkuranguang($id)
@@ -69,11 +76,21 @@ class HomeController extends Controller
         }
         $data = ['terkumpul' => $hasil];
         $a->update($data);
+        $d_r = [
+            'celengan_id' => $request->input('id'),
+            'uang' => $request->input('uang'),
+            'deskripsi' => "- " . $request->input('deskripsi')
+        ];
+        Riwayat::create($d_r);
         return redirect()->route('home');
     }
     public function hapus($id)
     {
-        Celengan::find($id)->delete();
+        $celengan = Celengan::find($id);
+        $img_celengan = base_path('/public/img/') . $celengan->img;
+        unlink($img_celengan);
+        $celengan->delete();
+        Riwayat::where('celengan_id', '=', $id)->delete();
         return redirect()->route('home')->with('msg', 'Berhasil menghapus');
     }
 }

@@ -10,14 +10,21 @@
   <br>
   <p class="fw-bold" style="text-align: center;">Rp. {{ $celengan->harga_barang }}</>
   <hr>
-  <center><h4>{{ $celengan->rencana }}</h4></center>
-  <p class="fw-normal" style="text-align: center;">Progres</p>
+  @if ($celengan->rencana == 'harian')
+    <center><h4>{{ $celengan->harga_barang / $celengan->nominal }} Hari lagi</h4></center>
+  @elseif ($celengan->rencana == 'mingguan')
+    <center><h4>{{ $celengan->harga_barang / $celengan->nominal }} Minggu lagi</h4></center>
+  @else
+    <center><h4>{{ $celengan->harga_barang / $celengan->nominal }} Bulan lagi</h4></center>
+  @endif
   @if (($celengan->terkumpul / $celengan->harga_barang) * (100) > 100)
+    <p class="fw-normal" style="text-align: center;"><b>Progres : 100%</b></p>
     <div class="progress">
       <p class="fw-normal" style="text-align: center;">100%</p>
       <div class="progress-bar" role="progressbar" style="width: 100%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
   @else
+    <p class="fw-normal" style="text-align: center;"><b>Progres : {{ ($celengan->terkumpul / $celengan->harga_barang) * (100) }}%</b></p>
     <div class="progress">
       <div class="progress-bar" role="progressbar" style="width: {{ ($celengan->terkumpul / $celengan->harga_barang) * (100) }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"><p class="fw-normal" style="text-align: center;">{{ ($celengan->terkumpul / $celengan->harga_barang) * (100) > 100 }}</p></div>
     </div>
@@ -64,6 +71,18 @@
   @endif
   </div>
   <br>
+  <hr>
+  <div class="list-group">
+    @for ($a = 0; $a < count($celengan->riwayat); $a++)
+      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">{{ $celengan->riwayat[$a]->uang }}</h5>
+          <small>{{ $celengan->riwayat[$a]->created_at }}</small>
+        </div>
+        <p class="mb-1">{{ $celengan->riwayat[$a]->deskripsi }}</p>
+      </a>
+      @endfor
+  </div>
   <hr>
 </div>
 @endsection
